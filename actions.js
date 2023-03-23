@@ -101,7 +101,7 @@ export const from = async () => {
       id: true,
     },
   })
-  if (argv.length === 4) {
+  if (argv.length >= 4) {
     const searchResults = search(argv[3], allSeries, {
       keySelector: (_) => _.name,
       returnMatchData: true,
