@@ -12,7 +12,7 @@ datasource db {
 
 model Episode {
   id       Int     @id @default(autoincrement())
-  path     String
+  path     String  @unique
   watched  Boolean @default(false)
   series   Series  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   seriesId Int
