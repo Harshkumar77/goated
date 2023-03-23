@@ -1,5 +1,7 @@
 import chalk from "chalk"
+import { exec } from "child_process"
 import { search } from "fast-fuzzy"
+import path from "path"
 import { argv } from "process"
 import { prisma, program } from "./index.js"
 import {
@@ -216,4 +218,13 @@ export const progress = async () => {
   console.log(chalk.magentaBright(`${watched}/${total}`))
   console.log(chalk.cyanBright(`${Math.floor((watched * 100) / total)} %`))
   process.exit(0)
+}
+
+export const studio = async () => {
+  ok("Opening studio in browser........ [might take some time]")
+  exec("npx prisma studio --port 7777", {
+    cwd: path.dirname(import.meta.url).split("file://")[1],
+    shell: "bash",
+    stdio: "ignore",
+  })
 }
