@@ -26,7 +26,7 @@ Usage
 Here are some examples of how to use Goated:
 
 - To add a single episode, run: `goated add /path/to/episode.mkv -s series_name`
-- To add multiple episodes in batch, run: `goated add-batch -b "$(ls $PWD/\*.mkv)" -s series_name`
+- To add multiple episodes in batch, run: `goated add-batch -b "$(ls $PWD/*.mkv)" -s series_name`
 - To select a random episode from a specific series, run: `goated from -s series_name`
 - To delete an entire series, run: `goated delete -s series_name`
 - To view information about a specific episode, run: `goated -i /path/to/episode.mkv`
