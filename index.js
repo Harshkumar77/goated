@@ -3,7 +3,16 @@ import { PrismaClient } from "@prisma/client"
 import { Command } from "commander"
 import inquirer from "inquirer"
 import inquirerPrompt from "inquirer-autocomplete-prompt"
-import { add, addBatch, deleteVideo, from, play, progress, searchKeyword, studio } from "./actions.js"
+import {
+  add,
+  addBatch,
+  deleteVideo,
+  from,
+  play,
+  progress,
+  searchKeyword,
+  studio,
+} from "./actions.js"
 
 export const program = new Command()
 export const prisma = new PrismaClient()
@@ -45,13 +54,19 @@ prisma.$connect().then(() => {
     .action(from)
     .description(`Select random episode from specific series`)
 
-  program.command("search <keyword>").action(searchKeyword).description(`Search series name`)
+  program
+    .command("search <keyword>")
+    .action(searchKeyword)
+    .description(`Search series name`)
 
   program.command("delete").action(deleteVideo).description(`Delete a series`)
 
   program.command("progress").action(progress).description("Check your progrss")
 
-  program.command('studio').action(studio).description("A GUI for renaming or deleting")
+  program
+    .command("studio")
+    .action(studio)
+    .description("A GUI for renaming or deleting")
 
   program.parse()
 })
