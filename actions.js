@@ -2,7 +2,6 @@ import chalk from "chalk"
 import { exec } from "child_process"
 import { search } from "fast-fuzzy"
 import path from "path"
-import { argv } from "process"
 import { prisma, program } from "./index.js"
 import {
   error,
@@ -94,60 +93,13 @@ export const addBatch = async () => {
   ok(`${filesArray.length} episodes added`)
 }
 
-export const from = async () => {
+export const from = async (a) => {
   const allSeries = await prisma.series.findMany({
     select: {
       name: true,
       id: true,
     },
   })
-  if (argv.length >= 4) {
-    const searchResults = search(argv[3], allSeries, {
-      keySelector: (_) => _.name,
-      returnMatchData: true,
-    })
-    if (searchResults.length === 0) error("No series found")
-    const series = await prisma.series.findUniqueOrThrow({
-      where: {
-        id: searchResults[0].item.id,
-      },
-      include: {
-        Episode: true,
-      },
-    })
-    let episodes = series.Episode
-    let unwatchedEpisodes = episodes.filter((_) => !_.watched)
-    if (unwatchedEpisodes.length === 0 && episodes.length !== 0) {
-      await prisma.episode.updateMany({
-        where: {
-          series: {
-            name: series,
-          },
-        },
-        data: {
-          watched: false,
-        },
-      })
-      episodes = (
-        await prisma.series.findUniqueOrThrow({
-          where: {
-            name: series,
-          },
-          include: {
-            Episode: true,
-          },
-        })
-      ).Episode
-      unwatchedEpisodes = episodes.filter((_) => !_.watched)
-    }
-    if (episodes.length === 0) {
-      error("Add some episodes you lazy")
-    }
-    const episode = randomElementFromArray(unwatchedEpisodes)
-    await playPath(episode.path)
-    if (program.opts().info) console.log(episode)
-    process.exit(0)
-  }
   const allSeriesOnlyNames = allSeries.map(({ name }) => name)
 
   if (allSeriesOnlyNames.length === 0) {
@@ -227,4 +179,58 @@ export const studio = async () => {
     shell: "bash",
     stdio: "ignore",
   })
+}
+
+export const searchKeyword = async (keyword) => {
+  const allSeries = await prisma.series.findMany({
+    select: {
+      name: true,
+      id: true,
+    },
+  })
+  const searchResults = search(keyword, allSeries, {
+    keySelector: (_) => _.name,
+    returnMatchData: true,
+  })
+  if (searchResults.length === 0) error("No series found")
+  const series = await prisma.series.findUniqueOrThrow({
+    where: {
+      id: searchResults[0].item.id,
+    },
+    include: {
+      Episode: true,
+    },
+  })
+  let episodes = series.Episode
+  let unwatchedEpisodes = episodes.filter((_) => !_.watched)
+  if (unwatchedEpisodes.length === 0 && episodes.length !== 0) {
+    await prisma.episode.updateMany({
+      where: {
+        series: {
+          name: series,
+        },
+      },
+      data: {
+        watched: false,
+      },
+    })
+    episodes = (
+      await prisma.series.findUniqueOrThrow({
+        where: {
+          name: series,
+        },
+        include: {
+          Episode: true,
+        },
+      })
+    ).Episode
+    unwatchedEpisodes = episodes.filter((_) => !_.watched)
+  }
+  if (episodes.length === 0) {
+    error("Add some episodes you lazy")
+  }
+  const episode = randomElementFromArray(unwatchedEpisodes)
+  await playPath(episode.path)
+  if (program.opts().info) console.log(episode)
+  process.exit(0)
 }
