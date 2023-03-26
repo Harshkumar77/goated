@@ -6,12 +6,9 @@ import inquirer from "inquirer"
 import { prisma, program } from "./index.js"
 
 export function playPath(path) {
-  const player = program.opts().player
-  if (!player) execSync(`xdg-open "${path}"`)
-  else
-    execSync(`nohup ${player} "${path}" &>/dev/null &`, {
-      shell: "zsh",
-    })
+  execSync(`vlc "${path}" &>/dev/null &`, {
+    shell: "zsh",
+  })
   return prisma.episode.update({
     where: {
       path: path,
