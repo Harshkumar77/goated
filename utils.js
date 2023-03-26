@@ -10,25 +10,15 @@ export async function playPath(path, command = "") {
   exec(`vlc "${path}" ${command} &>/dev/null &`, {
     shell: "bash",
   })
-  return prisma.$transaction([
-    prisma.episode.update({
-      where: {
-        path: path,
-      },
-      data: {
-        watched: true,
-      },
-    }),
-    prisma.history.create({
-      data: {
-        episode: {
-          connect: {
-            path,
-          },
-        },
-      },
-    }),
-  ])
+  await prisma.episode.update({
+    where: {
+      path: path,
+    },
+    data: {
+      watched: true,
+    },
+  })
+  await insertInHistory(path)
 }
 
 export function error(message) {
@@ -96,5 +86,39 @@ export async function historySelector() {
     },
     filter: (_) => baseToFullMap.get(_),
     pageSize: 10,
+  })
+}
+
+export async function insertInHistory(path) {
+  const history = await prisma.history.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  })
+  if (history.length === 100)
+    return prisma.$transaction([
+      prisma.history.delete({
+        where: {
+          createdAt: history[0].createdAt,
+        },
+      }),
+      prisma.history.create({
+        data: {
+          episode: {
+            connect: {
+              path,
+            },
+          },
+        },
+      }),
+    ])
+  return prisma.history.create({
+    data: {
+      episode: {
+        connect: {
+          path,
+        },
+      },
+    },
   })
 }
