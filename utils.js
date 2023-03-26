@@ -7,7 +7,7 @@ import { prisma, program } from "./index.js"
 
 export function playPath(path) {
   execSync(`vlc "${path}" &>/dev/null &`, {
-    shell: "zsh",
+    shell: "bash",
   })
   return prisma.episode.update({
     where: {

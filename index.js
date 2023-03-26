@@ -30,7 +30,6 @@ prisma.$connect().then(() => {
     "files with full path seperated by \\n"
   )
   program.option("-s --series <series name>", "search in old series name")
-  program.option("-p --player <player command>", "specify the player")
   program.option("-i --info", "show info")
 
   program.command("play").action(play)
