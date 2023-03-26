@@ -1,22 +1,34 @@
 import chalk from "chalk"
-import { execSync } from "child_process"
+import { exec } from "child_process"
 import { randomInt } from "crypto"
 import { search } from "fast-fuzzy"
 import inquirer from "inquirer"
-import { prisma, program } from "./index.js"
+import { prisma } from "./index.js"
+import { basename } from "path"
 
-export function playPath(path) {
-  execSync(`vlc "${path}" &>/dev/null &`, {
+export async function playPath(path, command = "") {
+  exec(`vlc "${path}" ${command} &>/dev/null &`, {
     shell: "bash",
   })
-  return prisma.episode.update({
-    where: {
-      path: path,
-    },
-    data: {
-      watched: true,
-    },
-  })
+  return prisma.$transaction([
+    prisma.episode.update({
+      where: {
+        path: path,
+      },
+      data: {
+        watched: true,
+      },
+    }),
+    prisma.history.create({
+      data: {
+        episode: {
+          connect: {
+            path,
+          },
+        },
+      },
+    }),
+  ])
 }
 
 export function error(message) {
@@ -50,6 +62,39 @@ export async function seriesSelector() {
       return results.length ? results : allSeries
     },
 
+    pageSize: 10,
+  })
+}
+
+export async function historySelector() {
+  const fullPath = (
+    await prisma.history.findMany({
+      include: { episode: true },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+  ).map(({ episode: { path } }) => path)
+  const basePath = fullPath.map((_) => basename(_))
+  const baseToFullMap = new Map()
+  basePath.forEach((_, i) => {
+    baseToFullMap.set(_, fullPath[i])
+  })
+  return await inquirer.prompt({
+    type: "autocomplete",
+    suggestOnly: false,
+    message: "-",
+    emptyText: "Nothing found!",
+    name: "path",
+    source: (_, input = "") => {
+      const results = search(input, basePath, {
+        returnMatchData: true,
+        keySelector: (_) => _,
+        ignoreCase: true,
+      }).map((_) => _.item)
+      return results.length ? results : basePath
+    },
+    filter: (_) => baseToFullMap.get(_),
     pageSize: 10,
   })
 }

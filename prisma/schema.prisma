@@ -11,15 +11,22 @@ datasource db {
 }
 
 model Episode {
-  id       Int     @id @default(autoincrement())
-  path     String  @unique
-  watched  Boolean @default(false)
-  series   Series  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  id       Int       @id @default(autoincrement())
+  path     String    @unique
+  watched  Boolean   @default(false)
+  series   Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   seriesId Int
+  History  History[]
 }
 
 model Series {
   id      Int       @id @default(autoincrement())
   name    String    @unique
   Episode Episode[]
+}
+
+model History {
+  episode   Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  episodeId Int
+  createdAt DateTime @unique @default(now())
 }

@@ -8,6 +8,7 @@ import {
   addBatch,
   deleteVideo,
   from,
+  history,
   play,
   progress,
   searchKeyword,
@@ -66,6 +67,11 @@ prisma.$connect().then(() => {
     .command("studio")
     .action(studio)
     .description("A GUI for renaming or deleting")
+
+  program
+    .command("history")
+    .action(history)
+    .description("Checkout your history")
 
   program.parse()
 })

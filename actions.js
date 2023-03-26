@@ -5,6 +5,7 @@ import path from "path"
 import { prisma, program } from "./index.js"
 import {
   error,
+  historySelector,
   ok,
   playPath,
   randomElementFromArray,
@@ -233,4 +234,9 @@ export const searchKeyword = async (keyword) => {
   await playPath(episode.path)
   if (program.opts().info) console.log(episode)
   process.exit(0)
+}
+
+export const history = async () => {
+  const { path } = await historySelector()
+  await playPath(path, "--qt-continue 2")
 }
