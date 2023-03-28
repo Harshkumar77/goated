@@ -17,6 +17,7 @@ model Episode {
   series   Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   seriesId Int
   History  History[]
+  length   Int
 }
 
 model Series {
