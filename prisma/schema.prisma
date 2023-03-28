@@ -18,16 +18,29 @@ model Episode {
   seriesId Int
   History  History[]
   length   Int
+  Scenes   Scenes[]
 }
 
 model Series {
   id      Int       @id @default(autoincrement())
   name    String    @unique
   Episode Episode[]
+  Scenes  Scenes[]
 }
 
 model History {
   episode   Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
   episodeId Int
   createdAt DateTime @unique @default(now())
+}
+
+model Scenes {
+  name      String  @unique
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  series    Series  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  views     Int     @default(0)
+  startTime Int
+  endTime   Int
+  episodeId Int
+  seriesId  Int
 }

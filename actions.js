@@ -10,6 +10,7 @@ import {
   playPath,
   randomElementFromArray,
   seriesSelector,
+  videoLength,
 } from "./utils.js"
 
 export const play = async () => {
@@ -42,6 +43,7 @@ export const add = async () => {
   await prisma.episode.create({
     data: {
       path: file,
+      length: await videoLength(file),
       series: {
         connectOrCreate: {
           where: {
@@ -54,7 +56,7 @@ export const add = async () => {
       },
     },
   })
-  ok("Episode added to existing series")
+  ok("Episode added")
 }
 
 export const addBatch = async () => {
@@ -83,18 +85,21 @@ export const addBatch = async () => {
     },
     data: {
       Episode: {
-        create: filesArray.map((path) => {
-          return {
-            path,
-          }
-        }),
+        create: await Promise.all(
+          filesArray.map(async (path) => {
+            return {
+              path,
+              length: await videoLength(path),
+            }
+          })
+        ),
       },
     },
   })
   ok(`${filesArray.length} episodes added`)
 }
 
-export const from = async (a) => {
+export const from = async () => {
   const allSeries = await prisma.series.findMany({
     select: {
       name: true,

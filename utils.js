@@ -5,6 +5,7 @@ import { search } from "fast-fuzzy"
 import inquirer from "inquirer"
 import { prisma } from "./index.js"
 import { basename } from "path"
+import { promisify } from "util"
 
 export async function playPath(path, command = "") {
   exec(`vlc "${path}" ${command} &>/dev/null &`, {
@@ -125,4 +126,12 @@ export async function insertInHistory(path) {
       },
     }),
   ]
+}
+
+export async function videoLength(path) {
+  const { stdout, stderr } = await promisify(exec)(
+    `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${path}"`
+  )
+  if (stderr) throw stderr
+  return Number(Number(stdout).toFixed(0))
 }
