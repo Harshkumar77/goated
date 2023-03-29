@@ -146,8 +146,8 @@ export const from = async () => {
   process.exit(0)
 }
 
-export const deleteSeries = async (id) => {
-  if (!id) {
+export const deleteFromDB = async (id_or_name_or_path) => {
+  if (!id_or_name_or_path) {
     const allSeries = (
       await prisma.series.findMany({
         select: {
@@ -167,19 +167,31 @@ export const deleteSeries = async (id) => {
     ok(`${series} deleted from list`)
     process.exit(0)
   }
-  const series = await prisma.series.findUnique({ where: { id } })
+  const series = await prisma.series.findFirst({
+    where: { OR: [{ id: id_or_name_or_path }, { name: id_or_name_or_path }] },
+  })
   if (series) {
-    await prisma.series.delete({ where: { id } })
+    await prisma.series.delete({ where: { id: series.id } })
     ok(`${series.name} deleted`)
     process.exit(0)
   }
-  const episode = await prisma.episode.findUnique({ where: { id } })
+  const episode = await prisma.episode.findFirst({
+    where: { OR: [{ id: id_or_name_or_path }, { path: getFilePath(id_or_name_or_path) }] },
+  })
   if (episode) {
-    await prisma.series.delete({ where: { id } })
+    await prisma.episode.delete({ where: { id : episode.id } })
     ok(`${path.basename(episode.path)} deleted`)
     process.exit(0)
   }
-  error(`No series, episode or scene found with id- ${id}`)
+  const scene = await prisma.scenes.findFirst({
+    where: { OR: [{ id: id_or_name_or_path }, { name: id_or_name_or_path }] },
+  })
+  if (scene) {
+    await prisma.scenes.delete({ where: { id: id_or_name_or_path } })
+    ok(`${path.basename(episode.path)} deleted`)
+    process.exit(0)
+  }
+  error(`No series, episode or scene found with id or name = ${id_or_name_or_path}`)
 }
 
 export const progress = async () => {

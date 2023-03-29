@@ -7,7 +7,7 @@ import {
   add,
   addBatch,
   addScene,
-  deleteSeries,
+  deleteFromDB,
   from,
   history,
   play,
@@ -59,7 +59,7 @@ prisma.$connect().then(() => {
     .action(searchKeyword)
     .description(`Search series name`)
 
-  program.command("delete [episode-or-series-or-scene-id]").action(deleteSeries).description(`Delete a series`)
+  program.command("delete [episode-or-series-or-scene-id-or-name]").action(deleteFromDB).description(`Delete a series`)
 
   program.command("progress").action(progress).description("Check your progrss")
 
