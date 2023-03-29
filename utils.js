@@ -7,21 +7,44 @@ import path, { basename } from "path"
 import { promisify } from "util"
 import { prisma } from "./index.js"
 
-export async function playPath(path, command = "") {
+export async function playPath(
+  path,
+  command = "",
+  media = "episode",
+  id = null
+) {
   exec(`vlc "${path}" ${command} -f &>/dev/null &`, {
     shell: "bash",
   })
-  return prisma.$transaction([
-    prisma.episode.update({
-      where: {
-        path: path,
-      },
-      data: {
-        watched: true,
-      },
-    }),
-    ...(await insertInHistory(path)),
-  ])
+  if (media === "episode")
+    return prisma.$transaction([
+      prisma.episode.update({
+        where: {
+          path: path,
+        },
+        data: {
+          watched: true,
+        },
+      }),
+      ...(await insertInHistory(path)),
+    ])
+  if (media === "scene") {
+    if (!id) throw Error("id not provided in playPath - utils.js")
+    return prisma.$transaction([
+      prisma.scenes.update({
+        where: {
+          id,
+        },
+        data: {
+          views: {
+            increment: 1,
+          },
+        },
+      }),
+      ...(await insertInHistory(path)),
+    ])
+  }
+  throw Error("invalid media provided to playpath - utils.js" + media)
 }
 
 export function error(message) {
@@ -92,6 +115,37 @@ export async function historySelector() {
   })
 }
 
+export async function sceneSelector() {
+  const allScenes = await prisma.scenes.findMany({
+    include: { episode: true },
+    orderBy: {
+      views: "desc",
+    },
+  })
+  const sceneTitles = allScenes.map(({ name }) => name)
+  const sceneToEpisodeMap = new Map()
+  sceneTitles.forEach((_, i) => {
+    sceneToEpisodeMap.set(_, allScenes[i])
+  })
+  return await inquirer.prompt({
+    type: "autocomplete",
+    suggestOnly: false,
+    message: "-",
+    emptyText: "Nothing found!",
+    name: "scene",
+    source: (_, input = "") => {
+      const results = search(input, sceneTitles, {
+        returnMatchData: true,
+        keySelector: (_) => _,
+        ignoreCase: true,
+      }).map((_) => _.item)
+      return results.length ? results : sceneTitles
+    },
+    filter: (_) => sceneToEpisodeMap.get(_),
+    pageSize: 10,
+  })
+}
+
 export async function insertInHistory(path) {
   const history = await prisma.history.findMany({
     orderBy: {
@@ -139,4 +193,20 @@ export async function videoLength(path) {
 export function getFilePath(file) {
   if (file[0] == "/" || file[0] == "~") return path.normalize(file)
   return path.join(process.cwd(), file)
+}
+
+export function timeStringToSeconds(timeString) {
+  const timeParts = timeString.split(":").map(parseFloat)
+  let seconds = 0
+  if (timeParts.length === 3) {
+    seconds += timeParts[0] * 3600
+    seconds += timeParts[1] * 60
+    seconds += timeParts[2]
+  } else if (timeParts.length === 2) {
+    seconds += timeParts[0] * 60
+    seconds += timeParts[1]
+  } else if (timeParts.length === 1) {
+    seconds += timeParts[0]
+  }
+  return seconds
 }

@@ -1,5 +1,4 @@
 import chalk from "chalk"
-import { exec } from "child_process"
 import { search } from "fast-fuzzy"
 import path from "path"
 import { prisma, program } from "./index.js"
@@ -10,7 +9,9 @@ import {
   ok,
   playPath,
   randomElementFromArray,
+  sceneSelector,
   seriesSelector,
+  timeStringToSeconds,
   videoLength,
 } from "./utils.js"
 
@@ -176,10 +177,15 @@ export const deleteFromDB = async (id_or_name_or_path) => {
     process.exit(0)
   }
   const episode = await prisma.episode.findFirst({
-    where: { OR: [{ id: id_or_name_or_path }, { path: getFilePath(id_or_name_or_path) }] },
+    where: {
+      OR: [
+        { id: id_or_name_or_path },
+        { path: getFilePath(id_or_name_or_path) },
+      ],
+    },
   })
   if (episode) {
-    await prisma.episode.delete({ where: { id : episode.id } })
+    await prisma.episode.delete({ where: { id: episode.id } })
     ok(`${path.basename(episode.path)} deleted`)
     process.exit(0)
   }
@@ -191,7 +197,9 @@ export const deleteFromDB = async (id_or_name_or_path) => {
     ok(`${path.basename(episode.path)} deleted`)
     process.exit(0)
   }
-  error(`No series, episode or scene found with id or name = ${id_or_name_or_path}`)
+  error(
+    `No series, episode or scene found with id or name = ${id_or_name_or_path}`
+  )
 }
 
 export const progress = async () => {
@@ -265,7 +273,43 @@ export const history = async () => {
   await playPath(path, "--qt-continue 2")
 }
 
-export const addScene = async (x, y, z) => {
-  // console.log(1,x,y);
-  console.log(x, y, z)
+export const addScene = async (id_or_path) => {
+  if (!id_or_path) error("provide id or episode file")
+  const episode = await prisma.episode.findFirst({
+    where: { OR: [{ id: id_or_path }, { path: getFilePath(id_or_path) }] },
+  })
+  if (!episode) error(`File is not is database or incorrect id`)
+  const { start, end, sceneName } = program.opts()
+  if (!start) error("--start not provided")
+  if (!end) error("--end not provided")
+  if (!sceneName) error("--scene-name not provided")
+  const newScene = await prisma.scenes.create({
+    data: {
+      episode: {
+        connect: {
+          id: episode.id,
+        },
+      },
+      series: {
+        connect: {
+          id: episode.seriesId,
+        },
+      },
+      startTime: timeStringToSeconds(start),
+      endTime: timeStringToSeconds(end),
+      name: sceneName,
+    },
+  })
+  ok(`New Scene added - ${newScene.name}`)
+  // console.log(episode, start, end, sceneName)
+}
+
+export const playScene = async () => {
+  const { scene } = await sceneSelector()
+  await playPath(
+    scene.episode.path,
+    ` --start-time ${scene.startTime} --stop-time ${scene.endTime} --play-and-exit `,
+    "scene",
+    scene.id
+  )
 }

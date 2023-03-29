@@ -11,6 +11,7 @@ import {
   from,
   history,
   play,
+  playScene,
   progress,
   searchKeyword,
 } from "./actions.js"
@@ -32,6 +33,9 @@ prisma.$connect().then(() => {
   )
   program.option("-s --series <series name>", "search in old series name")
   program.option("-i --info", "show info")
+  program.option("--start <start time>", "search in old series name")
+  program.option("--end <end time>", "search in old series name")
+  program.option("--scene-name <scene name>", "search in old series name")
 
   program.command("play").action(play)
 
@@ -71,16 +75,10 @@ prisma.$connect().then(() => {
     .action(history)
     .description("Checkout your history")
 
-  // program
-  //   .command("scene")
-  //   .action(progress)
-  //   .addCommand(
-  //     new Command("add")
-  //       .addArgument("<id>")
-  //       .addOption("<start>")
-  //       .addArgument("end")
-  //       .action(addScene)
-  //   )
+  program
+    .command("scene")
+    .action(playScene)
+    .addCommand(new Command("add").action(addScene).addArgument("<id-or-path"))
 
   program.parse()
 })
