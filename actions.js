@@ -36,10 +36,11 @@ export const play = async () => {
   process.exit(0)
 }
 
-export const add = async () => {
-  const { file, series } = program.opts()
+export const add = async (file) => {
+  const { series } = program.opts()
   if (!file) error("No file provided")
   if (!series) error("No series provided")
+  const path = getFilePath(file)
   await prisma.episode.create({
     data: {
       path: file,
@@ -59,11 +60,10 @@ export const add = async () => {
   ok("Episode added")
 }
 
-export const addBatch = async () => {
-  const { batchFiles, series } = program.opts()
-  if (!batchFiles) return error("No file provided")
+export const addBatch = async (files) => {
+  const { series } = program.opts()
   if (!series) return error("No series provided")
-  const filesArray = batchFiles.split("\n")
+  const paths = files.map(getFilePath)
   const existingSeries = await prisma.series.findUnique({
     where: {
       name: series,
