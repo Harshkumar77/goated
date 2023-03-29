@@ -5,6 +5,7 @@ import path from "path"
 import { prisma, program } from "./index.js"
 import {
   error,
+  getFilePath,
   historySelector,
   ok,
   playPath,
@@ -43,7 +44,7 @@ export const add = async (file) => {
   const path = getFilePath(file)
   await prisma.episode.create({
     data: {
-      path: file,
+      path: path,
       length: await videoLength(file),
       series: {
         connectOrCreate: {
@@ -86,7 +87,7 @@ export const addBatch = async (files) => {
     data: {
       Episode: {
         create: await Promise.all(
-          filesArray.map(async (path) => {
+          paths.map(async (path) => {
             return {
               path,
               length: await videoLength(path),
@@ -96,7 +97,7 @@ export const addBatch = async (files) => {
       },
     },
   })
-  ok(`${filesArray.length} episodes added`)
+  ok(`${paths.length} episodes added`)
 }
 
 export const from = async () => {
@@ -145,25 +146,40 @@ export const from = async () => {
   process.exit(0)
 }
 
-export const deleteVideo = async () => {
-  const allSeries = (
-    await prisma.series.findMany({
-      select: {
-        name: true,
+export const deleteSeries = async (id) => {
+  if (!id) {
+    const allSeries = (
+      await prisma.series.findMany({
+        select: {
+          name: true,
+        },
+      })
+    ).map(({ name }) => name)
+    if (allSeries.length === 0) {
+      error("Add some episodes you lazy")
+    }
+    const { series } = await seriesSelector()
+    await prisma.series.delete({
+      where: {
+        name: series,
       },
     })
-  ).map(({ name }) => name)
-  if (allSeries.length === 0) {
-    error("Add some episodes you lazy")
+    ok(`${series} deleted from list`)
+    process.exit(0)
   }
-  const { series } = await seriesSelector()
-  await prisma.series.delete({
-    where: {
-      name: series,
-    },
-  })
-  ok(`${series} deleted from list`)
-  process.exit(0)
+  const series = await prisma.series.findUnique({ where: { id } })
+  if (series) {
+    await prisma.series.delete({ where: { id } })
+    ok(`${series.name} deleted`)
+    process.exit(0)
+  }
+  const episode = await prisma.episode.findUnique({ where: { id } })
+  if (episode) {
+    await prisma.series.delete({ where: { id } })
+    ok(`${path.basename(episode.path)} deleted`)
+    process.exit(0)
+  }
+  error(`No series, episode or scene found with id- ${id}`)
 }
 
 export const progress = async () => {
@@ -235,4 +251,9 @@ export const searchKeyword = async (keyword) => {
 export const history = async () => {
   const { path } = await historySelector()
   await playPath(path, "--qt-continue 2")
+}
+
+export const addScene = async (x, y, z) => {
+  // console.log(1,x,y);
+  console.log(x, y, z)
 }

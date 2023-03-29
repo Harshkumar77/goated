@@ -3,12 +3,12 @@ import { exec } from "child_process"
 import { randomInt } from "crypto"
 import { search } from "fast-fuzzy"
 import inquirer from "inquirer"
-import { prisma } from "./index.js"
-import { basename } from "path"
+import path, { basename } from "path"
 import { promisify } from "util"
+import { prisma } from "./index.js"
 
 export async function playPath(path, command = "") {
-  exec(`vlc "${path}" ${command} &>/dev/null &`, {
+  exec(`vlc "${path}" ${command} -f &>/dev/null &`, {
     shell: "bash",
   })
   return prisma.$transaction([

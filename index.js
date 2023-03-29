@@ -6,7 +6,8 @@ import inquirerPrompt from "inquirer-autocomplete-prompt"
 import {
   add,
   addBatch,
-  deleteVideo,
+  addScene,
+  deleteSeries,
   from,
   history,
   play,
@@ -58,7 +59,7 @@ prisma.$connect().then(() => {
     .action(searchKeyword)
     .description(`Search series name`)
 
-  program.command("delete").action(deleteVideo).description(`Delete a series`)
+  program.command("delete [episode-or-series-or-scene-id]").action(deleteSeries).description(`Delete a series`)
 
   program.command("progress").action(progress).description("Check your progrss")
 
@@ -66,6 +67,18 @@ prisma.$connect().then(() => {
     .command("history")
     .action(history)
     .description("Checkout your history")
+
+
+  // program
+  //   .command("scene")
+  //   .action(progress)
+  //   .addCommand(
+  //     new Command("add")
+  //       .addArgument("<id>")
+  //       .addOption("<start>")
+  //       .addArgument("end")
+  //       .action(addScene)
+  //   )
 
   program.parse()
 })
