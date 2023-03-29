@@ -178,15 +178,6 @@ export const progress = async () => {
   process.exit(0)
 }
 
-export const studio = async () => {
-  ok("Opening studio in browser........ [might take some time]")
-  exec("npx prisma studio --port 7777", {
-    cwd: path.dirname(import.meta.url).split("file://")[1],
-    shell: "bash",
-    stdio: "ignore",
-  })
-}
-
 export const searchKeyword = async (keyword) => {
   const allSeries = await prisma.series.findMany({
     select: {

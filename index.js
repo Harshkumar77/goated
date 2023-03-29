@@ -12,7 +12,6 @@ import {
   play,
   progress,
   searchKeyword,
-  studio,
 } from "./actions.js"
 
 export const program = new Command()
@@ -62,11 +61,6 @@ prisma.$connect().then(() => {
   program.command("delete").action(deleteVideo).description(`Delete a series`)
 
   program.command("progress").action(progress).description("Check your progrss")
-
-  program
-    .command("studio")
-    .action(studio)
-    .description("A GUI for renaming or deleting")
 
   program
     .command("history")
