@@ -59,7 +59,10 @@ prisma.$connect().then(() => {
     .action(searchKeyword)
     .description(`Search series name`)
 
-  program.command("delete [episode-or-series-or-scene-id-or-name]").action(deleteFromDB).description(`Delete a series`)
+  program
+    .command("delete [episode-or-series-or-scene-id-or-name]")
+    .action(deleteFromDB)
+    .description(`Delete a series`)
 
   program.command("progress").action(progress).description("Check your progrss")
 
@@ -67,7 +70,6 @@ prisma.$connect().then(() => {
     .command("history")
     .action(history)
     .description("Checkout your history")
-
 
   // program
   //   .command("scene")
