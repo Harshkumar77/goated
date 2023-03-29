@@ -35,14 +35,14 @@ prisma.$connect().then(() => {
   program.command("play").action(play)
 
   program
-    .command("add")
+    .command("add <file>")
     .action(add)
     .description(
       `Add single episode\nExample - goated add /path/to/episode.mkv -s californication`
     )
 
   program
-    .command("add-batch")
+    .command("add-batch <files...>")
     .action(addBatch)
     .description(
       `Add episodes in batch\nExample - goated add-batch -b "$(ls $PWD/*.mkv)" -s californication`

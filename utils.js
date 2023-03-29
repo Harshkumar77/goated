@@ -135,3 +135,8 @@ export async function videoLength(path) {
   if (stderr) throw stderr
   return Number(Number(stdout).toFixed(0))
 }
+
+export function getFilePath(file) {
+  if (file[0] == "/" || file[0] == "~") return path.normalize(file)
+  return path.join(process.cwd(), file)
+}

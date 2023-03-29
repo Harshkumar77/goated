@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,36 +8,37 @@ datasource db {
 }
 
 model Episode {
-  id       Int       @id @default(autoincrement())
+  id       String    @id @default(cuid())
   path     String    @unique
   watched  Boolean   @default(false)
-  series   Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  seriesId Int
-  History  History[]
+  seriesId String
   length   Int
+  series   Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  History  History[]
   Scenes   Scenes[]
 }
 
 model Series {
-  id      Int       @id @default(autoincrement())
+  id      String    @id @default(cuid())
   name    String    @unique
   Episode Episode[]
   Scenes  Scenes[]
 }
 
 model History {
+  episodeId String
+  createdAt DateTime @id @unique @default(now())
   episode   Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
-  episodeId Int
-  createdAt DateTime @unique @default(now())
 }
 
 model Scenes {
+  id        String  @id @default(cuid())
   name      String  @unique
-  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
-  series    Series  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   views     Int     @default(0)
   startTime Int
   endTime   Int
-  episodeId Int
-  seriesId  Int
+  episodeId String
+  seriesId  String
+  series    Series  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
 }
