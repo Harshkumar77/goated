@@ -12,7 +12,7 @@ Here are some of the features Goated offers:
 
 - Select random episode from collection 🎲
 - Mark episode as watched automaticaly ✅
-- Mark the scenes and then play them
+- Mark the scenes and then play them 🐐
 
 ## Installation
 
