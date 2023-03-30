@@ -1,11 +1,13 @@
 import chalk from "chalk"
-import { exec } from "child_process"
+import { exec, execFile } from "child_process"
 import { randomInt } from "crypto"
 import { search } from "fast-fuzzy"
 import inquirer from "inquirer"
-import path, { basename } from "path"
+import path, { basename, dirname } from "path"
 import { promisify } from "util"
 import { prisma } from "./index.js"
+import { existsSync, copyFileSync } from "node:fs"
+import { fileURLToPath } from "url"
 
 export async function playPath(
   path,
@@ -209,4 +211,12 @@ export function timeStringToSeconds(timeString) {
     seconds += timeParts[0]
   }
   return seconds
+}
+
+export function initializeDB() {
+  if (process.env.NODE_ENV === "development") return true
+  if (existsSync(`${process.env.HOME}/.goatedDB`)) return true
+  const src = `${fileURLToPath(dirname(import.meta.url))}/prisma/sample.db`
+  const dest = `${process.env.HOME}/.goatedDB`
+  copyFileSync(src, dest)
 }

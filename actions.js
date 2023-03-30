@@ -14,6 +14,8 @@ import {
   timeStringToSeconds,
   videoLength,
 } from "./utils.js"
+import { promisify } from "util"
+import { exec } from "child_process"
 
 export const play = async () => {
   const unwatchedEpisodes = await prisma.episode.findMany({
@@ -38,31 +40,7 @@ export const play = async () => {
   process.exit(0)
 }
 
-export const add = async (file) => {
-  const { series } = program.opts()
-  if (!file) error("No file provided")
-  if (!series) error("No series provided")
-  const path = getFilePath(file)
-  await prisma.episode.create({
-    data: {
-      path: path,
-      length: await videoLength(file),
-      series: {
-        connectOrCreate: {
-          where: {
-            name: series,
-          },
-          create: {
-            name: series,
-          },
-        },
-      },
-    },
-  })
-  ok("Episode added")
-}
-
-export const addBatch = async (files) => {
+export const add = async (files) => {
   const { series } = program.opts()
   if (!series) return error("No series provided")
   const paths = files.map(getFilePath)
@@ -301,7 +279,6 @@ export const addScene = async (id_or_path) => {
     },
   })
   ok(`New Scene added - ${newScene.name}`)
-  // console.log(episode, start, end, sceneName)
 }
 
 export const playScene = async () => {
@@ -312,4 +289,25 @@ export const playScene = async () => {
     "scene",
     scene.id
   )
+}
+
+export const studio = async () => {
+  ok("Opening studio in browser........ [might take some time]")
+  promisify(exec)("npx prisma studio --port 7777", {
+    cwd: path.dirname(import.meta.url).split("file://")[1],
+    shell: "bash",
+    stdio: "ignore",
+  })
+}
+
+export const init = async () => {
+  ok("Initialising goated........ [might take some time]")
+  promisify(exec)("npx prisma generate", {
+    cwd: path.dirname(import.meta.url).split("file://")[1],
+    shell: "bash",
+    stdio: "ignore",
+  }).then(() => {
+    console.clear()
+    ok("Done...")
+  })
 }

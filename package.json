@@ -1,29 +1,27 @@
 {
-  "name": "goated",
-  "version": "1.0.0",
+  "name": "gpq",
+  "version": "3.5.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "goated": "index.js"
+    "goated": "./index.js"
   },
   "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paralleldrive/cuid2": "^2.2.0",
+    "prisma": "^4.11.0",
     "@prisma/client": "^4.11.0",
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
-    "cuid": "^3.0.0",
+    "dotenv": "^16.0.3",
     "fast-fuzzy": "^1.12.0",
     "inquirer": "^9.1.0",
     "inquirer-autocomplete-prompt": "^3.0.0"
   },
-  "devDependencies": {
-    "prisma": "^4.11.0"
-  }
+  "devDependencies": {}
 }
