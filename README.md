@@ -10,13 +10,18 @@ With Goated, you can indulge in the pleasure of revisiting your favorite moments
 
 Here are some of the features Goated offers:
 
-- Add single and batch episodes 🎞️
 - Select random episode from collection 🎲
-- Delete entire series from collection 🗑️
-- Search by series name 🕵️‍♀️
-- View episode info 📜
-- Play random episode 🎥
 - Mark episode as watched automaticaly ✅
+- Mark the scenes and then play them
+
+## Installation
+
+VLC and ffmpeg is a required dependency
+
+```sh
+npm i gpq -g
+goated init
+```
 
 ## Usage
 
@@ -25,11 +30,66 @@ Usage
 
 Here are some examples of how to use Goated:
 
-- To add a single episode, run: `goated add /path/to/episode.mkv -s series_name`
-- To add multiple episodes in batch, run: `goated add-batch -b "$(ls $PWD/*.mkv)" -s series_name`
-- To select a random episode from a specific series, run: `goated from -s series_name`
-- To delete an entire series, run: `goated delete -s series_name`
-- To view information about a specific episode, run: `goated -i /path/to/episode.mkv`
-- To play a random episode, run: `goated play`
+### Adding Episode
 
-That's it! Enjoy using Goated to randomly select your next favorite episode. 🎉
+To add a single episode, run:
+
+```sh
+goated add /path/to/episode.mkv -s series_name
+```
+
+To add multiple episodes in batch, run:
+
+```sh
+goated add /path/to/a /path/to/b ... -s series_name
+```
+
+### To watch episodes
+
+To open a selector in which you can choose by typing a keyword run :
+
+```sh
+goated from
+```
+
+To search and play the episode with best match
+
+```sh
+goated search keyword
+```
+
+To play a random episode, run:
+
+```sh
+goated play
+```
+
+To open a selector to search and play your marked scene:
+
+```sh
+goated scene
+```
+
+### Deleting
+
+To open a selector in which you can delete a series by serarching it with keyword, run:
+
+```sh
+goated delete
+```
+
+To delete a specific item (series, episode, or scene) based on its name or ID:
+
+```sh
+goated delete {series_name or series_id or episode_path or episode_id or scene_name or scene_id}
+```
+
+### Add Scene
+
+To add a scene
+
+```sh
+goated scene add --scene-name "Opening scene" --start 00:02:30 --end 00:05:00 <id or path to episode>
+```
+
+## That's it! Enjoy using Goated to randomly select your next favorite episode. 🎉

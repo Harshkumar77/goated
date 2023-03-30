@@ -16,6 +16,7 @@ import {
 } from "./utils.js"
 import { promisify } from "util"
 import { exec } from "child_process"
+import ora from "ora"
 
 export const play = async () => {
   const unwatchedEpisodes = await prisma.episode.findMany({
@@ -301,13 +302,21 @@ export const studio = async () => {
 }
 
 export const init = async () => {
-  ok("Initialising goated........ [might take some time]")
+  const spinner = ora({
+    text: "Initialising goated....",
+    spinner: {
+      frames: ["🎬", "📺", "🎞️", "🍿", "🔀", "📁", "‍💻", "🐐"],
+    },
+  })
+  spinner.start()
   promisify(exec)("npx prisma generate", {
     cwd: path.dirname(import.meta.url).split("file://")[1],
     shell: "bash",
     stdio: "ignore",
   }).then(() => {
-    console.clear()
-    ok("Done...")
+    spinner.stopAndPersist({
+      symbol: "🐐",
+      text: chalk.bold.blueBright("Done"),
+    })
   })
 }

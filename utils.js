@@ -8,6 +8,7 @@ import { promisify } from "util"
 import { prisma } from "./index.js"
 import { existsSync, copyFileSync } from "node:fs"
 import { fileURLToPath } from "url"
+import { readFileSync } from "fs"
 
 export async function playPath(
   path,
@@ -219,4 +220,11 @@ export function initializeDB() {
   const src = `${fileURLToPath(dirname(import.meta.url))}/prisma/sample.db`
   const dest = `${process.env.HOME}/.goatedDB`
   copyFileSync(src, dest)
+}
+
+export function version() {
+  const rawJSON = readFileSync(
+    `${fileURLToPath(dirname(import.meta.url))}/package.json`
+  )
+  return JSON.parse(rawJSON).version
 }
