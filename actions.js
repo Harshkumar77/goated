@@ -308,7 +308,7 @@ export const playScene = async () => {
   const { scene } = await sceneSelector()
   await playPath(
     scene.episode.path,
-    ` --start-time ${scene.startTime} --stop-time ${scene.endTime} --play-and-exit `,
+    ` --start-time ${scene.startTime} --stop-time ${scene.endTime} --play-and-exit --no-video-title --noqt-name-in-title`,
     "scene",
     scene.id
   )
