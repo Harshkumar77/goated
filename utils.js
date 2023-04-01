@@ -222,6 +222,14 @@ export function initializeDB() {
   copyFileSync(src, dest)
 }
 
+export function checkDB() {
+  if (process.env.NODE_ENV === "development") return true
+  if (existsSync(`${process.env.HOME}/.goatedDB`)) return true
+  error(`No DB found, to create a new DB:
+run "goated init"
+if you have replaced the .goatedDB file place it to home directory `)
+}
+
 export function version() {
   const rawJSON = readFileSync(
     `${fileURLToPath(dirname(import.meta.url))}/package.json`

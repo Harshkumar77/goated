@@ -18,7 +18,7 @@ import {
   studio,
   add,
 } from "./actions.js"
-import { initializeDB, version } from "./utils.js"
+import { checkDB, initializeDB, version } from "./utils.js"
 
 export const program = new Command()
 export const prisma = new PrismaClient({
@@ -33,7 +33,7 @@ export const prisma = new PrismaClient({
 })
 
 inquirer.registerPrompt("autocomplete", inquirerPrompt)
-initializeDB()
+checkDB()
 
 program
   .name("goated")

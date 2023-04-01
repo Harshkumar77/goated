@@ -6,6 +6,7 @@ import {
   error,
   getFilePath,
   historySelector,
+  initializeDB,
   ok,
   playPath,
   randomElementFromArray,
@@ -60,24 +61,27 @@ export const add = async (files) => {
     })
     ok(`New series - ${series} added`)
   }
-  await prisma.series.update({
-    where: {
-      name: series,
-    },
-    data: {
-      Episode: {
-        create: await Promise.all(
-          paths.map(async (path) => {
-            return {
-              path,
-              length: await videoLength(path),
-            }
-          })
-        ),
+
+  try {
+    await prisma.series.update({
+      where: {
+        name: series,
       },
-    },
-  })
-  ok(`${paths.length} episodes added`)
+      data: {
+        Episode: {
+          create: await Promise.all(
+            paths.map(async (path) => {
+              return {
+                path,
+                length: await videoLength(path),
+              }
+            })
+          ),
+        },
+      },
+    })
+    ok(`${paths.length} episodes added`)
+  } catch (error) {}
 }
 
 export const from = async () => {
@@ -314,6 +318,7 @@ export const init = async () => {
     shell: "bash",
     stdio: "ignore",
   }).then(() => {
+    initializeDB()
     spinner.stopAndPersist({
       symbol: "🐐",
       text: chalk.bold.blueBright("Done"),
