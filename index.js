@@ -42,9 +42,9 @@ program
 
 program.option("-s --series <series name>", "search in old series name")
 program.option("-i --info", "show info")
-program.option("--start <start time>", "search in old series name")
-program.option("--end <end time>", "search in old series name")
-program.option("--scene-name <scene name>", "search in old series name")
+program.option("-S --start <start time>", "search in old series name")
+program.option("-E --end <end time>", "search in old series name")
+program.option("-sn --scene-name <scene name>", "search in old series name")
 
 program
   .command("play")

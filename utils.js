@@ -125,7 +125,10 @@ export async function sceneSelector() {
       views: "desc",
     },
   })
-  const sceneTitles = allScenes.map(({ name }) => name)
+  const sceneTitles = allScenes.map(
+    ({ name, startTime, endTime }) =>
+      `${name} ${secondsToTimeString(endTime - startTime)}`
+  )
   const sceneToEpisodeMap = new Map()
   sceneTitles.forEach((_, i) => {
     sceneToEpisodeMap.set(_, allScenes[i])
@@ -212,6 +215,21 @@ export function timeStringToSeconds(timeString) {
     seconds += timeParts[0]
   }
   return seconds
+}
+
+function secondsToTimeString(totalSeconds) {
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds - hours * 3600) / 60)
+  const seconds = Math.floor(totalSeconds - hours * 3600 - minutes * 60)
+
+  if (hours > 0) {
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+  }
+  return `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`
 }
 
 export function initializeDB() {
