@@ -1,0 +1,164 @@
+{
+  "play": {
+    "full": "play",
+    "alt": "p",
+    "aliases": [
+      "p",
+      "pl",
+      "ply",
+      "p",
+      "pla",
+      "plyr",
+      "palay",
+      "plei",
+      "plaei",
+      "pli",
+      "plaie",
+      "pley",
+      "plaai",
+      "paaly",
+      "peli",
+      "pliay"
+    ]
+  },
+  "progress": {
+    "full": "progress",
+    "alt": "prg",
+    "aliases": [
+      "prg",
+      "pr",
+      "pro",
+      "progr",
+      "prgrs",
+      "progess",
+      "proggres",
+      "progrees",
+      "proggess",
+      "progresse",
+      "progrezz"
+    ]
+  },
+  "scene": {
+    "full": "scene",
+    "alt": "sc",
+    "aliases": [
+      "sc",
+      "sce",
+      "sen",
+      "sine",
+      "sceen",
+      "sene",
+      "seene",
+      "sceene",
+      "scenee",
+      "sceenzz",
+      "sceenn",
+      "scenne",
+      "scee",
+      "sseen",
+      "sceeze"
+    ]
+  },
+  "history": {
+    "full": "history",
+    "alt": "his",
+    "aliases": [
+      "his",
+      "hst",
+      "hstry",
+      "histy",
+      "histoy",
+      "histry",
+      "hissory",
+      "histery",
+      "histree",
+      "hizztory",
+      "historie",
+      "historey",
+      "historyy",
+      "histeri",
+      "histerii"
+    ]
+  },
+  "delete": {
+    "full": "delete",
+    "alt": "del",
+    "aliases": [
+      "del",
+      "dlt",
+      "delet",
+      "delette",
+      "deleet",
+      "deelte",
+      "deleti",
+      "deleyt",
+      "dellee",
+      "dellte",
+      "delleet",
+      "delezte",
+      "dilete",
+      "dletee",
+      "delltte"
+    ]
+  },
+  "search": {
+    "full": "search",
+    "alt": "s",
+    "aliases": [
+      "s",
+      "srch",
+      "srchh",
+      "searc",
+      "searh",
+      "sarch",
+      "seerch",
+      "searcch",
+      "searchh",
+      "seaarch",
+      "serch",
+      "searhc",
+      "serach",
+      "serchh",
+      "saarch",
+      "searcsh"
+    ]
+  },
+  "add": {
+    "full": "add",
+    "alt": "a",
+    "aliases": [
+      "a",
+      "ad",
+      "aadd",
+      "aad",
+      "addi",
+      "aedd",
+      "addii",
+      "addit",
+      "addl",
+      "aaddl",
+      "addd",
+      "adde",
+      "addezz",
+      "addt",
+      "adddi",
+      "adee"
+    ]
+  },
+  "from": {
+    "full": "from",
+    "aliases": [
+      "fr",
+      "fro",
+      "form",
+      "fom",
+      "froom",
+      "frum",
+      "frm",
+      "froo",
+      "fromm",
+      "fro",
+      "fron"
+    ]
+  }
+}

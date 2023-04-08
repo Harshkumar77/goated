@@ -8,7 +8,7 @@ import {
   historySelector,
   initializeDB,
   ok,
-  playPath,
+  playVLC,
   randomElementFromArray,
   sceneSelector,
   seriesSelector,
@@ -37,7 +37,7 @@ export const play = async () => {
     return await play()
   }
   const episode = randomElementFromArray(unwatchedEpisodes)
-  await playPath(episode.path)
+  await playVLC(episode.path)
   if (program.opts().info) console.log(episode)
   process.exit(0)
 }
@@ -125,7 +125,7 @@ export const from = async () => {
     error("Add some episodes you lazy")
   }
   const episode = randomElementFromArray(unwatchedEpisodes)
-  await playPath(episode.path)
+  await playVLC(episode.path)
   if (program.opts().info) console.log(episode)
   process.exit(0)
 }
@@ -246,14 +246,14 @@ export const searchKeyword = async (keyword) => {
     error("Add some episodes you lazy")
   }
   const episode = randomElementFromArray(unwatchedEpisodes)
-  await playPath(episode.path)
+  await playVLC(episode.path)
   if (program.opts().info) console.log(episode)
   process.exit(0)
 }
 
 export const history = async () => {
   const { path } = await historySelector()
-  await playPath(path, "--qt-continue 2")
+  await playVLC(path, "--qt-continue 2")
 }
 
 export const addScene = async (id_or_path) => {
@@ -288,7 +288,7 @@ export const addScene = async (id_or_path) => {
 
 export const playScene = async () => {
   const { scene } = await sceneSelector()
-  await playPath(
+  await playVLC(
     scene.episode.path,
     ` --start-time ${scene.startTime} --stop-time ${scene.endTime} --play-and-exit --no-video-title --noqt-name-in-title`,
     "scene",

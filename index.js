@@ -15,11 +15,11 @@ import {
   playScene,
   progress,
   searchKeyword,
-  studio,
   add,
 } from "./actions.js"
-import { checkDB, initializeDB, version } from "./utils.js"
+import { checkDB, stucture, version } from "./utils.js"
 
+const struc = stucture()
 export const program = new Command()
 export const prisma = new PrismaClient({
   datasources: {
@@ -47,36 +47,50 @@ program.option("-E --end <end time>", "search in old series name")
 program.option("-sn --scene-name <scene name>", "search in old series name")
 
 program
-  .command("play")
+  .command(struc.play.full)
+  .aliases(struc.play.aliases)
   .action(play)
   .description(`Play a complete random episode from the database`)
 
 program
-  .command("add <files...>")
+  .command(`${struc.add.full} <files...>`)
+  .aliases(struc.add.aliases)
   .action(add)
   .description(`Add episodes in database`)
 
 program
-  .command("from")
+  .command(`${struc.from.full}`)
+  .aliases(struc.from.aliases)
   .action(from)
   .description(`Select random episode from specific series`)
 
 program
-  .command("search <keyword>")
+  .command(`${struc.search.full} <keyword>`)
+  .aliases(struc.search.aliases)
   .action(searchKeyword)
   .description(`Search series name`)
 
 program
-  .command("delete [episode-or-series-or-scene-id-or-name]")
+  .command(`${struc.delete.full} [episode-or-series-or-scene-id-or-name]`)
+  .aliases(struc.delete.aliases)
   .action(deleteFromDB)
   .description(`Delete a series`)
 
-program.command("progress").action(progress).description("Check your progrss")
-
-program.command("history").action(history).description("Checkout your history")
+program
+  .command(`${struc.progress.full}`)
+  .aliases(struc.progress.aliases)
+  .action(progress)
+  .description("Check your progrss")
 
 program
-  .command("scene")
+  .command(`${struc.history.full}`)
+  .aliases(struc.history.aliases)
+  .action(history)
+  .description("Checkout your history")
+
+program
+  .command(`${struc.scene.full}`)
+  .aliases(struc.scene.aliases)
   .action(playScene)
   .addCommand(new Command("add").action(addScene).addArgument("<id-or-path"))
 

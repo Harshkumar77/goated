@@ -10,7 +10,7 @@ import { existsSync, copyFileSync } from "node:fs"
 import { fileURLToPath } from "url"
 import { readFileSync } from "fs"
 
-export async function playPath(
+export async function playVLC(
   path,
   command = "",
   media = "episode",
@@ -253,4 +253,11 @@ export function version() {
     `${fileURLToPath(dirname(import.meta.url))}/package.json`
   )
   return JSON.parse(rawJSON).version
+}
+
+export function stucture() {
+  const rawJSON = readFileSync(
+    `${fileURLToPath(dirname(import.meta.url))}/aliases.json`
+  )
+  return JSON.parse(rawJSON)
 }
